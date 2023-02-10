@@ -48,6 +48,12 @@ function calcfatorpg(i, areadireta) {
     return pesos[i];
 }
 
+function calcGae(p,aprovada){
+if(aprovada){
+
+}
+}
+
 function firstload() {
     updateQuali(myform, 1);
     updateQuali(myform2, 1);
@@ -397,15 +403,26 @@ function calcSalario(form) {
         ftstep = 1.038;
         base = 1197.67;
     } else if (periodo == 7) {
-        ftstep = 1.038;
-        base = 1263.54;
-    } else {
         ftstep = 1.039;
-        base = 1326.72;
+        base = 1263.54;
     }
+    else if (periodo == 15) {
+        ftstep = 1.039;
+        base = 1326.72
+;
+    }
+    else if (periodo == 16) {
+        ftstep = 1.039;
+        base = 1787.49
+;
+    }
+   
     if (form.medico.checked) {
         base = base * 2;
     }
+   
+    
+    
     var ftvb = parseFloat(form.ddClasse.value) + parseFloat(form.ddNivel
         .value) + parseFloat(form.ddProg.value) - 3;
     var ftcarga = form.ddCargaH.value;
@@ -414,6 +431,14 @@ function calcSalario(form) {
     //      //Se não houver CD ou se for 60%, o vencimento é calculado pela tabela normalmente
     var vencimento = Math.floor(base * (Math.pow(ftstep, ftvb)) *
         ftcarga * 100) / 100;
+
+    var gae = 0;
+    if (form.gae.checked) {
+        gae = vencimento;
+
+
+    }
+
     //    } else {
     //      //Se o CD for 100% então o vencimento é o valor do CD
     //      var vencimento = valorCD(form.ddCD.value,periodo);
@@ -456,7 +481,7 @@ function calcSalario(form) {
 		form.numURP.disabled = true;
 	}
     var qualificacao = ftpg * vencimento
-    var remuneracao = vencimento + urp + qualificacao + Math.floor(
+    var remuneracao =  vencimento + urp + qualificacao + Math.floor(
         ftinsa * vencimento * 100) / 100 + anuenio;
 
     if (form.ddSindTipo.value == "max") {
@@ -507,7 +532,7 @@ function calcSalario(form) {
     var decter = form.decter.checked ? (remuneracao + fungrat + cargodir) / 2 : 0
 
     var bruto = remuneracao + saude + alimentacao + transporte +
-        creche + fungrat + cargodir + noturno + ferias + decter;
+        creche + fungrat + cargodir + noturno + ferias + decter + gae;
     var basepss = remuneracao; //vencimento + urp + qualificacao;
     var tetopss = 4663.75
 	
@@ -577,7 +602,7 @@ function calcSalario(form) {
 
     //Eu chutei que CD 60% nao incidia IR, mas pelo FB falaram que incide.
     //Caso não incida basta remover de baseirrf. Quando é 100%, cargodir = 0
-    var baseirrf = vencimento + urp + qualificacao + ftinsa * vencimento +
+    var baseirrf = vencimento + urp + qualificacao + gae + ftinsa * vencimento +
         fungrat + cargodir - valorpss - aliqfunp - reducaoDepsIRRF;
     var aliqirrf = valorIRRF(baseirrf, periodo);
 
@@ -599,6 +624,7 @@ function calcSalario(form) {
     form.txInsa.value = formatValor(Math.floor(ftinsa * vencimento *
         100) / 100);
     form.txInss.value = formatValor(Math.round(valorpss * 100) / 100);
+    form.txGAE.value = formatValor(Math.round(gae * 100) / 100);
     form.txBruto.value = formatValor(Math.round(bruto * 100) / 100);
     form.txIrrf.value = formatValor(Math.round(aliqirrf * 100) / 100);
     form.txSaude.value = formatValor(saude);
